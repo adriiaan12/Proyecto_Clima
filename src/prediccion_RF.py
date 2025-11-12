@@ -45,12 +45,12 @@ def predict_weather(timestamp, city, temp, wind_speed, wind_dir, pressure, humid
 # === 3. Ejemplo de uso ===
 if __name__ == "__main__":
     pred = predict_weather(
-        timestamp="2025-11-02 15:00:00",
-        city="Valladolid",
-        temp=2.78,
-        wind_speed=4.63,
+        timestamp="2025-11-12 14:00:00",
+        city="Murcia",
+        temp=22,
+        wind_speed=11,
         wind_dir=340,
-        pressure=987,
-        humidity=82
+        pressure=1015,
+        humidity=53
     )
     print("🌤️ Predicción del clima:", pred)
