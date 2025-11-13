@@ -48,12 +48,12 @@ def predict_weather(timestamp, city, temp, wind_speed, wind_dir, pressure, humid
 #,4.63,340,987,82,Snow
 if __name__ == "__main__":
     pred = predict_weather(
-        timestamp="2025-11-02 15:00:00",
-        city="Valladolid",
-        temp=2.78,
-        wind_speed=4.63,
-        wind_dir=340,
-        pressure=987,
-        humidity=82
+        timestamp="2025-11-13 14:00:00",
+        city="Murcia",
+        temp=25,
+        wind_speed=13,
+        wind_dir=0,
+        pressure=1012,
+        humidity=45
     )
     print("Predicción del clima:", pred)
