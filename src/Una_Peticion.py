@@ -6,9 +6,9 @@ BASE_URL = "https://opendata.aemet.es/opendata/api/valores/climatologicos/diario
 
 # --- Configuración de la petición ---
 estacion = "5796"      # Código de la estación
-year = 2011    # Año que quieres descargar
-fecha_ini = f"{2011}-01-01"
-fecha_fin = f"{2011}-12-31"
+year = 2013    # Año que quieres descargar
+fecha_ini = f"{2013}-01-01"
+fecha_fin = f"{2013}-12-31"
 
 # Construir URL
 url = BASE_URL.format(fechaIni=fecha_ini, fechaFin=fecha_fin, idema=estacion)
