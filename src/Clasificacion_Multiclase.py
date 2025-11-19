@@ -37,6 +37,8 @@ X_scaled = scaler.fit_transform(X)
 
 # Guardar el scaler para usar en predicciones
 joblib.dump(scaler, "../models/scaler.save")
+joblib.dump(encoder, "../models/city_encoder.save")
+
 
 # === 6. Codificar el target ===
 label_encoder = LabelEncoder()

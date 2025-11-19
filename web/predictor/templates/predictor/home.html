@@ -1,0 +1,24 @@
+<form method="post">
+    {% csrf_token %}
+    <label for="temperature">Temperatura (ºC):</label>
+    <input type="number" step="0.1" name="temperature" id="temperature" required><br><br>
+
+    <label for="humidity">Humedad (%):</label>
+    <input type="number" step="0.1" name="humidity" id="humidity" required><br><br>
+
+    <label for="wind_speed">Velocidad del viento (m/s):</label>
+    <input type="number" step="0.1" name="wind_speed" id="wind_speed" required><br><br>
+
+    <label for="city">Ciudad:</label>
+    <select name="city" id="city" required>
+        {% for c in cities %}
+            <option value="{{ c }}">{{ c }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <button type="submit">Predecir</button>
+</form>
+
+{% if prediccion %}
+    <h2>Predicción: {{ prediccion }}</h2>
+{% endif %}
