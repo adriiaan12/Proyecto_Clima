@@ -1,12 +1,12 @@
+import os
 import requests
 import pandas as pd
 import time
-import json
+import jsonfrom 
+from dotenv import load_dotenv
 
-API_KEY = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3d3RheG1hbnd3QGdtYWlsLmNvbSIsImp0aSI6IjA4MGRlMjdjLWMyNTYtNDU2ZS05N2M0LTYwMTU5NzNkMWU1MyIsImlzcyI6IkFFTUVUIiwiaWF0IjoxNzYzMDQ5NTUwLCJ1c2VySWQiOiIwODBkZTI3Yy1jMjU2LTQ1NmUtOTdjNC02MDE1OTczZDFlNTMiLCJyb2xlIjoiIn0.tqkqTfc9n1AqDl8mVprFX1vKiZa_1HO_Hi7X2m6iLlg"
-#curl -X GET "https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos/fechaini/2010-01-01/fechafin/2025-12-31/estacion/3266A" -H "api_key: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3d3RheG1hbnd3QGdtYWlsLmNvbSIsImp0aSI6IjA4MGRlMjdjLWMyNTYtNDU2ZS05N2M0LTYwMTU5NzNkMWU1MyIsImlzcyI6IkFFTUVUIiwiaWF0IjoxNzYzMDQ5NTUwLCJ1c2VySWQiOiIwODBkZTI3Yy1jMjU2LTQ1NmUtOTdjNC02MDE1OTczZDFlNTMiLCJyb2xlIjoiIn0.tqkqTfc9n1AqDl8mVprFX1vKiZa_1HO_Hi7X2m6iLlg"
-
-
+load_dotenv()
+API_KEY = os.getenv("AEMET_API_KEY")
 # Endpoints
 BASE_DIARIOS_ESTACION = "https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos/fechaini/{fechaIni}/fechafin/{fechaFin}/estacion/{idema}"
 BASE_INVENTARIO_ESTACION = "https://opendata.aemet.es/opendata/api/valores/climatologicos/inventarioestaciones/estaciones/{idema}"

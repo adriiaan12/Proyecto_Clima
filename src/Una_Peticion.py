@@ -1,7 +1,10 @@
 import requests
 import pandas as pd
+import os
+from dotenv import load_dotenv
 
-API_KEY = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3d3RheG1hbnd3NzJAZ21haWwuY29tIiwianRpIjoiN2M4OTQ3NmQtZTM2Yy00ZDUxLWEwN2EtNDVkYjI2MjMzYTg1IiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE3NjMwMzc1MjMsInVzZXJJZCI6IjdjODk0NzZkLWUzNmMtNGQ1MS1hMDdhLTQ1ZGIyNjIzM2E4NSIsInJvbGUiOiIifQ.R6MYd3RWgG8fakZPEGF6oWBafH1F74j26ltzvLL39Ig"
+load_dotenv()
+API_KEY = os.getenv("AEMET_API_KEY")
 BASE_URL = "https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos/fechaini/{fechaIni}/fechafin/{fechaFin}/estacion/{idema}"
 
 # --- Configuración de la petición ---

@@ -1,9 +1,13 @@
+import os
 import requests
 import time
 import pandas as pd
 
 
-API_KEY = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZHJpYW5zYW5hbDI3QGdtYWlsLmNvbSIsImp0aSI6IjA1MTY0NjAwLTg0NzMtNGNkNC1iZjczLTYyZGEwOWZhMTcyNyIsImlzcyI6IkFFTUVUIiwiaWF0IjoxNzYxMDc5NDk0LCJ1c2VySWQiOiIwNTE2NDYwMC04NDczLTRjZDQtYmY3My02MmRhMDlmYTE3MjciLCJyb2xlIjoiIn0.JwjWB3XH77BfC9Gzt2uGp_o0Ls62wb2WURRCYY7K-BI"
+from dotenv import load_dotenv
+
+load_dotenv()
+API_KEY = os.getenv("AEMET_API_KEY")
 BASE_URL = "https://opendata.aemet.es/opendata/api/valores/climatologicos/inventarioestaciones/todasestaciones"
 
 # Paso 1: Llamar a la API

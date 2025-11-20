@@ -1,12 +1,16 @@
+import os
 import requests
 import json
 import time
 from datetime import date, timedelta
 from typing import Generator, Dict, Any, List, Optional
+from dotenv import load_dotenv
 
+load_dotenv()
+API_KEY = os.getenv("AEMET_API_KEY")
 # --- Configuración ---
 # **IMPORTANTE:** Reemplaza 'TU_API_KEY' con tu clave real de AEMET OpenData
-API_KEY = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3d3RheG1hbnd3QGdtYWlsLmNvbSIsImp0aSI6IjA4MGRlMjdjLWMyNTYtNDU2ZS05N2M0LTYwMTU5NzNkMWU1MyIsImlzcyI6IkFFTUVUIiwiaWF0IjoxNzYzMDQ5NTUwLCJ1c2VySWQiOiIwODBkZTI3Yy1jMjU2LTQ1NmUtOTdjNC02MDE1OTczZDFlNTMiLCJyb2xlIjoiIn0.tqkqTfc9n1AqDl8mVprFX1vKiZa_1HO_Hi7X2m6iLlg"
+
 
 # URL base y endpoint
 BASE_URL = "https://opendata.aemet.es/opendata/api/"
