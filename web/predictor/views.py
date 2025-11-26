@@ -1,8 +1,13 @@
+# views.py (Adaptado)
 import joblib
 import numpy as np
 from datetime import datetime
 from django.shortcuts import render
-from tensorflow.keras.models import load_model
+import tensorflow as tf
+
+# 🚨 Importa la función del archivo utils.py
+from .utils import obtener_prediccion_adaptada_aemet 
+
 
 MODEL_PATH = "../models/modelo_clima.h5"
 SCALER_PATH = "../models/scaler.save"
@@ -11,7 +16,7 @@ encoder = joblib.load("../models/city_encoder.save")
 cities = list(encoder.categories_[0])
 
 
-model = load_model(MODEL_PATH)
+model = tf.keras.models.load_model(MODEL_PATH)
 scaler = joblib.load(SCALER_PATH)
 label_classes = np.load(LABEL_ENCODER_PATH, allow_pickle=True)
 
@@ -19,42 +24,62 @@ label_classes = np.load(LABEL_ENCODER_PATH, allow_pickle=True)
 
 def home(request):
     prediccion = None
+    datos_aemet = None
+    error_aemet = None
 
     if request.method == "POST":
-        try:
-            temp = float(request.POST.get("temperature", 0))
-            humidity = float(request.POST.get("humidity", 0))
-            wind_speed = float(request.POST.get("wind_speed", 0))
-            city = request.POST.get("city")
-        except ValueError:
-            temp = humidity = wind_speed = 0
-            city = None
+        city = request.POST.get("city")
 
-        now = datetime.now()
-        hour = now.hour
-        month = now.month
-        weekday = now.weekday()
-        pressure = 1013
-        wind_dir = 0
+        if city:
+            # 1. 🌐 Llamar a la API de AEMET para obtener la predicción real
+            datos_aemet = obtener_prediccion_adaptada_aemet(city)
+            
+            if datos_aemet:
+                # 2. 📝 Asignar los datos de AEMET a las variables del modelo
+                # Los datos vienen ya convertidos (m/s y grados)
+                temp = datos_aemet["temperatura"]
+                humidity = datos_aemet["humidity"]
+                wind_speed = datos_aemet["wind_speed"]
+                wind_dir = datos_aemet["wind_dir"] # ¡Ahora es el valor numérico 0-360!
 
-        entrada = np.zeros((1, 17))
-        entrada[0,0] = temp
-        entrada[0,1] = wind_speed
-        entrada[0,2] = wind_dir
-        entrada[0,3] = pressure
-        entrada[0,4] = humidity
-        entrada[0,5] = hour
-        entrada[0,6] = month
-        entrada[0,7] = weekday
+                # Variables temporales/estáticas
+                now = datetime.now()
+                hour = now.hour
+                month = now.month
+                weekday = now.weekday()
+                pressure = 1013 
+                
+                # 3. 🔢 Crear el vector de entrada para el modelo
+                entrada = np.zeros((1, 17))
+                
+                # Cargar datos meteorológicos y temporales (índices 0-7)
+                entrada[0,0] = temp
+                entrada[0,1] = wind_speed
+                entrada[0,2] = wind_dir # Dirección en grados (0-360)
+                entrada[0,3] = pressure
+                entrada[0,4] = humidity
+                entrada[0,5] = hour
+                entrada[0,6] = month
+                entrada[0,7] = weekday
+                
+                # Codificación One-Hot de la ciudad
+                if city in cities:
+                    city_idx = cities.index(city)
+                    entrada[0, 8 + city_idx] = 1 
 
-        if city in cities:
-            city_idx = cities.index(city)
-            entrada[0, 8 + city_idx] = 1
-
-        entrada_scaled = scaler.transform(entrada)
-
-        pred_index = np.argmax(model.predict(entrada_scaled), axis=1)[0]
-        prediccion = label_classes[pred_index]
-
-    return render(request, "predictor/home.html", {"prediccion": prediccion, "cities": cities})
-
+                # 4. 🧠 Predecir
+                entrada_scaled = scaler.transform(entrada)
+                pred_index = np.argmax(model.predict(entrada_scaled), axis=1)[0]
+                prediccion = label_classes[pred_index]
+                
+            else:
+                error_aemet = f"No se pudo obtener la predicción para {city}."
+                
+    # Pasar los datos a la plantilla
+    context = {
+        "prediccion": prediccion, 
+        "cities": cities,
+        "error_aemet": error_aemet
+    }
+    
+    return render(request, "predictor/home.html", context)

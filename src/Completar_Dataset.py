@@ -6,6 +6,7 @@ import jsonfrom
 from dotenv import load_dotenv
 
 load_dotenv()
+#
 API_KEY = os.getenv("AEMET_API_KEY")
 # Endpoints
 BASE_DIARIOS_ESTACION = "https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos/fechaini/{fechaIni}/fechafin/{fechaFin}/estacion/{idema}"
