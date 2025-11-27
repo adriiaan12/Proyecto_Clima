@@ -1,11 +1,10 @@
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from tensorflow.keras.models import load_model
 import joblib
 
 # === 1. Cargar modelo, clases y scaler ===
-model = load_model("../models/modelo_clima.h5")
+model = tf.keras.models.load_model("../models/modelo_clima.h5")
 classes = np.load("../models/label_encoder_classes.npy", allow_pickle=True)
 scaler = joblib.load("../models/scaler.save")  # cargar el scaler original
 

@@ -1,14 +1,14 @@
-
+import os
+from dotenv import load_dotenv
 import requests
 import json
-import pandas as pd
 from typing import List, Dict, Any
-import math
 from datetime import datetime 
 
+load_dotenv()
 
 BASE_URL = "https://opendata.aemet.es/opendata/api"
-API_KEY = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXVsamltZW5lejEyMzIxMkBnbWFpbC5jb20iLCJqdGkiOiI4N2Q5NDIwYS04ZTkxLTQ1YjUtOGQ1NC0yYzliOGY4N2U0ZTQiLCJpc3MiOiJBRU1FVCIsImlhdCI6MTc2NDE5NDc2NSwidXNlcklkIjoiODdkOTQyMGEtOGU5MS00NWI1LThkNTQtMmM5YjhmODdlNGU0Iiwicm9sZSI6IiJ9.ncrWzasKMZnxWoAEsYPKsGnTJwnYXQkdyzbqU9OKAOQ" 
+API_KEY = os.getenv("AEMET_API_KEY") 
 
 # Diccionario de códigos (asumimos que está definido)
 CODIGOS_MUNICIPIO = {
@@ -57,7 +57,7 @@ def obtener_periodo_segun_hora(hora_actual: int) -> str:
 
 
 
-def obtener_prediccion_adaptada_aemet(nombre_municipio: str) -> Dict[str, Any] or None:
+def obtener_prediccion_adaptada_aemet(nombre_municipio: str) -> Dict[str, Any] | None:
     cod_municipio = CODIGOS_MUNICIPIO.get(nombre_municipio)
     
     if not cod_municipio:

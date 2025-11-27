@@ -35,12 +35,11 @@ def home(request):
             datos_aemet = obtener_prediccion_adaptada_aemet(city)
             
             if datos_aemet:
-                # 2. 📝 Asignar los datos de AEMET a las variables del modelo
-                # Los datos vienen ya convertidos (m/s y grados)
+                
                 temp = datos_aemet["temperatura"]
                 humidity = datos_aemet["humidity"]
                 wind_speed = datos_aemet["wind_speed"]
-                wind_dir = datos_aemet["wind_dir"] # ¡Ahora es el valor numérico 0-360!
+                wind_dir = datos_aemet["wind_dir"]
 
                 # Variables temporales/estáticas
                 now = datetime.now()
@@ -70,8 +69,7 @@ def home(request):
                 # 4. 🧠 Predecir
                 entrada_scaled = scaler.transform(entrada)
                 pred_index = np.argmax(model.predict(entrada_scaled), axis=1)[0]
-                prediccion = label_classes[pred_index]
-                
+                prediccion = label_classes[pred_index] 
             else:
                 error_aemet = f"No se pudo obtener la predicción para {city}."
                 

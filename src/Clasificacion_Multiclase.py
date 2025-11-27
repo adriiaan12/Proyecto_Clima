@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler, OneHotEncoder
 import joblib
 import tensorflow as tf
-from tensorflow.keras import layers, models
+
 
 # === 1. Cargar datos ===
 data = pd.read_csv("../data/dataset2/all_weather_data.csv")
@@ -51,11 +51,11 @@ np.save("../models/label_encoder_classes.npy", label_encoder.classes_)
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_encoded, test_size=0.2, random_state=42)
 
 # === 8. Crear modelo de red neuronal ===
-model = models.Sequential([
-    layers.Dense(128, activation='relu', input_shape=(X_train.shape[1],)),
-    layers.Dense(64, activation='relu'),
-    layers.Dense(32, activation='relu'),
-    layers.Dense(len(np.unique(y_encoded)), activation='softmax')
+model = tf.keras.models.Sequential([
+    tf.keras.layers.Dense(128, activation='relu', input_shape=(X_train.shape[1],)),
+    tf.keras.layers.Dense(64, activation='relu'),
+    tf.keras.layers.Dense(32, activation='relu'),
+    tf.keras.layers.Dense(len(np.unique(y_encoded)), activation='softmax')
 ])
 
 model.compile(optimizer='adam',
