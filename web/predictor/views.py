@@ -40,7 +40,7 @@ def home(request):
                 humidity = datos_aemet["humidity"]
                 wind_speed = datos_aemet["wind_speed"]
                 wind_dir = datos_aemet["wind_dir"]
-                clase_clima = datos_aemet.get("clase_clima", 'default')
+                
 
                 # Variables temporales/estáticas
                 now = datetime.now()
@@ -70,10 +70,15 @@ def home(request):
                 # 4. 🧠 Predecir
                 entrada_scaled = scaler.transform(entrada)
                 pred_index = np.argmax(model.predict(entrada_scaled), axis=1)[0]
-                prediccion = label_classes[pred_index] 
+                prediccion = label_classes[pred_index]
+                clase_clima = str(label_classes[pred_index])
+
             else:
                 error_aemet = f"No se pudo obtener la predicción para {city}."
-                
+    
+    
+    clase_clima = clase_clima.lower()
+    
     # Pasar los datos a la plantilla
     context = {
         "prediccion": prediccion, 

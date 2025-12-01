@@ -1,73 +1,72 @@
+
 <!DOCTYPE html>
 <html lang="es">
 {% load static %}
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Predicción Meteorológica</title>
-    <!-- Fuente moderna tipo iOS -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@100;300;500&family=Inter:wght@300;400;600&display=swap"
-        rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@100;300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+   
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
 
-<!-- La clase determina el tema base (colores) -->
-
+<!-- La clase 'clase_clima' (rain, clear, clouds...) viene de Django y activa el fondo correspondiente -->
 <body class="{{ clase_clima|default:'default' }}">
 
-    <!-- CAPAS DE ANIMACIÓN DE FONDO -->
+    <!-- === FONDO ANIMADO === -->
     <div class="weather-background">
-        <!-- Sol / Luna -->
+        <!-- Sol (se muestra solo en 'clear') -->
         <div class="sun"></div>
-        <div class="moon"></div>
-
-        <!-- Nubes (varias capas para profundidad) -->
+        
+        <!-- Nubes (se muestran en 'clouds' o 'rain') -->
         <div class="cloud cloud-1"></div>
         <div class="cloud cloud-2"></div>
         <div class="cloud cloud-3"></div>
-
-        <!-- Lluvia -->
+        
+        <!-- Lluvia (se muestra solo en 'rain') -->
         <div class="rain-container">
             <div class="rain-layer"></div>
         </div>
-
-        <!-- Nieve -->
+        
+        <!-- Nieve (se muestra solo en 'snow') -->
         <div class="snow-container">
             <div class="snow-layer"></div>
         </div>
 
-        <!-- Niebla -->
+        <!-- Niebla (se muestra solo en 'fog') -->
         <div class="fog-layer"></div>
     </div>
 
-    <!-- CONTENIDO PRINCIPAL -->
+    <!-- === CONTENIDO PRINCIPAL (EFECTO CRISTAL) === -->
     <div class="container glass-panel">
         <h1 class="main-title">Predicción del Tiempo</h1>
 
         <form method="post" class="weather-form">
             {% csrf_token %}
-
+            
             <div class="form-group">
                 <label for="city">Ubicación</label>
                 <div class="select-wrapper">
                     <select name="city" id="city" required>
                         <option value="" disabled selected>Seleccionar ciudad...</option>
                         {% for c in cities %}
-                        <option value="{{ c }}">{{ c }}</option>
+                        <!-- Mantiene la selección del usuario si recarga -->
+                        <option value="{{ c }}" {% if request.POST.city == c %}selected{% endif %}>{{ c }}</option>
                         {% endfor %}
                     </select>
                     <span class="arrow">▼</span>
                 </div>
             </div>
-
+            
             <button type="submit" class="predict-button">Ver Pronóstico</button>
         </form>
 
         {% if prediccion %}
         <div class="result-box">
             <div class="temp-display">
+                <!-- Mostramos la predicción grande -->
                 <span class="temp-value">{{ prediccion }}</span>
             </div>
             <div class="weather-desc">Predicción para {{ request.POST.city }}</div>
@@ -82,5 +81,4 @@
     </div>
 
 </body>
-
 </html>

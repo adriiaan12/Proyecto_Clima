@@ -11,7 +11,7 @@ load_dotenv()
 BASE_URL = "https://opendata.aemet.es/opendata/api"
 API_KEY = os.getenv("AEMET_API_KEY") 
 
-# Diccionario de códigos (asumimos que está definido)
+
 CODIGOS_MUNICIPIO = {
     "Madrid": "28079",
     "Barcelona": "08019",
@@ -24,7 +24,7 @@ CODIGOS_MUNICIPIO = {
     "Bilbao": "48020",
 }
 
-# --- FUNCIÓN DE UTILIDAD: CONVERSIÓN CARDINAL A GRADOS (0-360) ---
+
 DIRECCION_GRADOS = {
     'N': 0, 'NE': 45, 'E': 90, 'SE': 135, 'S': 180, 'SO': 225, 'O': 270, 'NO': 315,
     'C': 0, '': 0
@@ -42,7 +42,6 @@ def guardar_como_json(datos_aemet: List[Dict[str, Any]], nombre_archivo: str):
         print(f"✅ Datos crudos guardados exitosamente en: {nombre_archivo}")
     except Exception as e:
         print(f"❌ Error al guardar el archivo JSON: {e}")
-
 
 
 def obtener_periodo_segun_hora(hora_actual: int) -> str:
@@ -176,23 +175,15 @@ def obtener_prediccion_adaptada_aemet(nombre_municipio: str) -> Dict[str, Any] |
         # CONVERSIÓN: Cardinal a Grados (0-360)
         wind_dir_grados = cardinal_a_grados(direccion_viento_aemet)
 
-        # 4. Devolver los datos adaptados
-        datos_adaptados = {
+
+        # 5. Devolver diccionario final con la clase incluida
+        return {
             "temperatura": temperatura, 
             "humidity": humidity, 
             "wind_speed": wind_speed_ms,
-            "wind_dir": wind_dir_grados, 
+            "wind_dir": wind_dir_grados,
         }
         
-        # Logging informativo (Prints 4 y 5)
-        print(f"✅ Extracción adaptada para {nombre_municipio} completada. Viento: {wind_speed_ms:.2f} m/s ({direccion_viento_aemet} -> {wind_dir_grados}º)")
-        print("-" * 50)
-        print("4. DATOS FINALES ADAPTADOS PARA EL MODELO:")
-        print(datos_adaptados)
-        print("-" * 50)
-        
-        return datos_adaptados
-
     except requests.exceptions.RequestException as e:
         print(f"❌ Error de solicitud HTTP general (fuera del reintento): {e}")
         return None
