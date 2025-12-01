@@ -1,11 +1,10 @@
-# views.py (Adaptado)
 import joblib
 import numpy as np
 from datetime import datetime
 from django.shortcuts import render
 import tensorflow as tf
 
-# 🚨 Importa la función del archivo utils.py
+
 from .utils import obtener_prediccion_adaptada_aemet 
 
 
@@ -26,6 +25,7 @@ def home(request):
     prediccion = None
     datos_aemet = None
     error_aemet = None
+    clase_clima = 'default'
 
     if request.method == "POST":
         city = request.POST.get("city")
@@ -40,6 +40,7 @@ def home(request):
                 humidity = datos_aemet["humidity"]
                 wind_speed = datos_aemet["wind_speed"]
                 wind_dir = datos_aemet["wind_dir"]
+                clase_clima = datos_aemet.get("clase_clima", 'default')
 
                 # Variables temporales/estáticas
                 now = datetime.now()
@@ -77,7 +78,8 @@ def home(request):
     context = {
         "prediccion": prediccion, 
         "cities": cities,
-        "error_aemet": error_aemet
+        "error_aemet": error_aemet,
+        "clase_clima": clase_clima,
     }
     
     return render(request, "predictor/home.html", context)

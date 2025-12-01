@@ -1,32 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+{% load static %}
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Predicción Meteorológica</title>
+    <!-- Fuente moderna tipo iOS -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@100;300;500&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
 
-<body>
-    <form method="post">
-        {% csrf_token %}
-        <label for="city">Ciudad:</label>
-        <select name="city" id="city" required>
-            {% for c in cities %}
-            <option value="{{ c }}">{{ c }}</option>
-            {% endfor %}
-        </select><br><br>
+<!-- La clase determina el tema base (colores) -->
 
-        <button type="submit">Predecir</button>
-    </form>
+<body class="{{ clase_clima|default:'default' }}">
 
-    {% if prediccion %}
-    <h2>Predicción: {{ prediccion }}</h2>
-    {% endif %}
+    <!-- CAPAS DE ANIMACIÓN DE FONDO -->
+    <div class="weather-background">
+        <!-- Sol / Luna -->
+        <div class="sun"></div>
+        <div class="moon"></div>
 
-    {% if error_aemet %}
-    <p style="color: red;">Error: {{ error_aemet }}</p>
-    {% endif %}
+        <!-- Nubes (varias capas para profundidad) -->
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+
+        <!-- Lluvia -->
+        <div class="rain-container">
+            <div class="rain-layer"></div>
+        </div>
+
+        <!-- Nieve -->
+        <div class="snow-container">
+            <div class="snow-layer"></div>
+        </div>
+
+        <!-- Niebla -->
+        <div class="fog-layer"></div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="container glass-panel">
+        <h1 class="main-title">Predicción del Tiempo</h1>
+
+        <form method="post" class="weather-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="city">Ubicación</label>
+                <div class="select-wrapper">
+                    <select name="city" id="city" required>
+                        <option value="" disabled selected>Seleccionar ciudad...</option>
+                        {% for c in cities %}
+                        <option value="{{ c }}">{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="arrow">▼</span>
+                </div>
+            </div>
+
+            <button type="submit" class="predict-button">Ver Pronóstico</button>
+        </form>
+
+        {% if prediccion %}
+        <div class="result-box">
+            <div class="temp-display">
+                <span class="temp-value">{{ prediccion }}</span>
+            </div>
+            <div class="weather-desc">Predicción para {{ request.POST.city }}</div>
+        </div>
+        {% endif %}
+
+        {% if error_aemet %}
+        <div class="error-message">
+            <p>{{ error_aemet }}</p>
+        </div>
+        {% endif %}
+    </div>
+
 </body>
 
 </html>
