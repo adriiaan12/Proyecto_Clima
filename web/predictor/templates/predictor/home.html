@@ -15,7 +15,7 @@
 <!-- La clase 'clase_clima' (rain, clear, clouds...) viene de Django y activa el fondo correspondiente -->
 <body class="{{ clase_clima|default:'default' }}">
 
-    <!-- === FONDO ANIMADO === -->
+    
     <div class="weather-background">
         <!-- Sol (se muestra solo en 'clear') -->
         <div class="sun"></div>
@@ -24,7 +24,9 @@
         <div class="cloud cloud-1"></div>
         <div class="cloud cloud-2"></div>
         <div class="cloud cloud-3"></div>
-        
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-1"></div>
+
         <!-- Lluvia (se muestra solo en 'rain') -->
         <div class="rain-container">
             <div class="rain-layer"></div>
@@ -65,12 +67,26 @@
 
         {% if prediccion %}
         <div class="result-box">
-            <div class="temp-display">
-                <!-- Mostramos la predicción grande -->
-                <span class="temp-value">{{ prediccion }}</span>
+            <div class="result-header">
+                <h2 class="city-title">{{ request.POST.city }}</h2>
+                <span class="time-badge">{{ hora|default:"--:--" }}</span>
             </div>
+
+            <div class="temp-display">
+                <span class="temp-value">{{ temperatura|default:"--" }}°C</span>
+            </div>
+            
+            <div class="weather-desc">{{ prediccion }}</div>
+
+            <div class="weather-details">
+                <div class="detail-item">
+                    <span class="detail-label">Viento</span>
+                    <span class="detail-value">{{ wind_speed|floatformat:2 }} km/h</span>
+                </div>
+                </div>
             <div class="weather-desc">Predicción para {{ request.POST.city }}</div>
         </div>
+        
         {% endif %}
 
         {% if error_aemet %}

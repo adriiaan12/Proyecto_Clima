@@ -26,12 +26,17 @@ def home(request):
     datos_aemet = None
     error_aemet = None
     clase_clima = 'default'
+    temp = 0
+    humidity = 0
+    wind_speed = 0
+    wind_dir = 0
+    now = 0
 
     if request.method == "POST":
         city = request.POST.get("city")
 
         if city:
-            # 1. 🌐 Llamar a la API de AEMET para obtener la predicción real
+            # 1.Llamar a la API
             datos_aemet = obtener_prediccion_adaptada_aemet(city)
             
             if datos_aemet:
@@ -44,6 +49,7 @@ def home(request):
 
                 # Variables temporales/estáticas
                 now = datetime.now()
+                print(now)
                 hour = now.hour
                 month = now.month
                 weekday = now.weekday()
@@ -85,6 +91,11 @@ def home(request):
         "cities": cities,
         "error_aemet": error_aemet,
         "clase_clima": clase_clima,
+        "temperatura": temp,
+        "humedad": humidity,
+        "wind_speed": wind_speed,
+        "wind_dir": wind_dir,
+        "hora": now,
     }
     
     return render(request, "predictor/home.html", context)
