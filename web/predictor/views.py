@@ -1,101 +1,109 @@
 import joblib
 import numpy as np
-from datetime import datetime
-from django.shortcuts import render
 import tensorflow as tf
+from datetime import datetime
 
+# Importaciones nuevas para la API
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
 
-from .utils import obtener_prediccion_adaptada_aemet 
+from .utils import obtener_prediccion_adaptada_aemet
 
-
+# --- CARGA DE MODELOS (Se mantiene igual, esto está perfecto) ---
 MODEL_PATH = "../models/modelo_clima.h5"
 SCALER_PATH = "../models/scaler.save"
 LABEL_ENCODER_PATH = "../models/label_encoder_classes.npy"
-encoder = joblib.load("../models/city_encoder.save")
+# Asegúrate de que esta ruta sea correcta respecto a donde ejecutas manage.py
+encoder = joblib.load("../models/city_encoder.save") 
 cities = list(encoder.categories_[0])
-
 
 model = tf.keras.models.load_model(MODEL_PATH)
 scaler = joblib.load(SCALER_PATH)
 label_classes = np.load(LABEL_ENCODER_PATH, allow_pickle=True)
 
 
-
+@api_view(['GET', 'POST']) # Aceptamos GET (carga inicial) y POST (cuando el usuario busca)
 def home(request):
-    prediccion = None
+    prediccion = "Desconocido"
     datos_aemet = None
     error_aemet = None
     clase_clima = 'default'
+    
+    # Valores por defecto
     temp = 0
     humidity = 0
     wind_speed = 0
     wind_dir = 0
-    now = 0
+    
+    # 1. Obtener la ciudad (desde JSON o URL)
+    # Si es POST, busca en el cuerpo. Si es GET, busca en ?city=Madrid
+    city = request.data.get("city") or request.query_params.get("city")
 
-    if request.method == "POST":
-        city = request.POST.get("city")
+    # Si no hay ciudad, ponemos una por defecto para que la web no salga vacía
+    if not city:
+        city = "Madrid" 
 
-        if city:
-            # 1.Llamar a la API
-            datos_aemet = obtener_prediccion_adaptada_aemet(city)
+    if city:
+        # 2. Llamar a la API AEMET
+        datos_aemet = obtener_prediccion_adaptada_aemet(city)
+        
+        if datos_aemet:
+            temp = datos_aemet["temperatura"]
+            humidity = datos_aemet["humidity"]
+            wind_speed = datos_aemet["wind_speed"]
+            wind_dir = datos_aemet["wind_dir"]
             
-            if datos_aemet:
-                
-                temp = datos_aemet["temperatura"]
-                humidity = datos_aemet["humidity"]
-                wind_speed = datos_aemet["wind_speed"]
-                wind_dir = datos_aemet["wind_dir"]
-                
+            # Variables temporales
+            now = datetime.now()
+            hour = now.hour
+            month = now.month
+            weekday = now.weekday()
+            pressure = 1013 
+            
+            # 3. 🔢 Crear vector de entrada
+            entrada = np.zeros((1, 17))
+            
+            entrada[0,0] = temp
+            entrada[0,1] = wind_speed
+            entrada[0,2] = wind_dir 
+            entrada[0,3] = pressure
+            entrada[0,4] = humidity
+            entrada[0,5] = hour
+            entrada[0,6] = month
+            entrada[0,7] = weekday
+            
+            # One-Hot Encoding Ciudad
+            if city in cities:
+                city_idx = cities.index(city)
+                entrada[0, 8 + city_idx] = 1 
 
-                # Variables temporales/estáticas
-                now = datetime.now()
-                print(now)
-                hour = now.hour
-                month = now.month
-                weekday = now.weekday()
-                pressure = 1013 
-                
-                # 3. 🔢 Crear el vector de entrada para el modelo
-                entrada = np.zeros((1, 17))
-                
-                # Cargar datos meteorológicos y temporales (índices 0-7)
-                entrada[0,0] = temp
-                entrada[0,1] = wind_speed
-                entrada[0,2] = wind_dir # Dirección en grados (0-360)
-                entrada[0,3] = pressure
-                entrada[0,4] = humidity
-                entrada[0,5] = hour
-                entrada[0,6] = month
-                entrada[0,7] = weekday
-                
-                # Codificación One-Hot de la ciudad
-                if city in cities:
-                    city_idx = cities.index(city)
-                    entrada[0, 8 + city_idx] = 1 
+            # 4. 🧠 Predecir
+            entrada_scaled = scaler.transform(entrada)
+            pred_index = np.argmax(model.predict(entrada_scaled), axis=1)[0]
+            
+            # IMPORTANTE: Convertir numpy.str_ a string normal de Python
+            prediccion_raw = label_classes[pred_index]
+            prediccion = str(prediccion_raw) 
+            clase_clima = str(prediccion_raw).lower() # Para usar en CSS
 
-                # 4. 🧠 Predecir
-                entrada_scaled = scaler.transform(entrada)
-                pred_index = np.argmax(model.predict(entrada_scaled), axis=1)[0]
-                prediccion = label_classes[pred_index]
-                clase_clima = str(label_classes[pred_index])
-
-            else:
-                error_aemet = f"No se pudo obtener la predicción para {city}."
+        else:
+            error_aemet = f"No se pudo obtener datos para {city}."
     
+    # 5. Preparar el JSON de respuesta
     
-    clase_clima = clase_clima.lower()
-    
-    # Pasar los datos a la plantilla
-    context = {
+    print(cities)
+    print(clase_clima)
+    data = {
+        "city": city,
         "prediccion": prediccion, 
-        "cities": cities,
-        "error_aemet": error_aemet,
         "clase_clima": clase_clima,
-        "temperatura": temp,
-        "humedad": humidity,
-        "wind_speed": wind_speed,
-        "wind_dir": wind_dir,
-        "hora": now,
+        "temperatura": float(temp),
+        "humedad": float(humidity),
+        "wind_speed": float(wind_speed),
+        "wind_dir": float(wind_dir),
+        "available_cities": cities, # Enviamos la lista para hacer un select en React
+        "error": error_aemet,
     }
     
-    return render(request, "predictor/home.html", context)
+    return Response(data)

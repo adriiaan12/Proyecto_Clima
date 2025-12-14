@@ -19,6 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('predictor.urls')),  # Esto incluye tu app
+    
+    path('api/', include('predictor.urls')), 
 ]
 
