@@ -130,9 +130,9 @@ def obtener_prediccion_adaptada_aemet(nombre_municipio: str) -> Dict[str, Any] |
         if data_prediccion is None:
             return None
 
-        # --- 3. Extracción y Adaptación de Datos ---
         
-        # 💾 Opcional: Guardar el JSON crudo (opción para activar si se necesita)
+        
+        # Guardar el JSON crudo (opción para activar si se necesita)
         # nombre_archivo_salida = f"prediccion_cruda_{nombre_municipio}_{cod_municipio}.json"
         # guardar_como_json(data_prediccion, nombre_archivo_salida) 
         

@@ -89,11 +89,7 @@ def home(request):
 
         else:
             error_aemet = f"No se pudo obtener datos para {city}."
-    
-    # 5. Preparar el JSON de respuesta
-    
-    print(cities)
-    print(clase_clima)
+
     data = {
         "city": city,
         "prediccion": prediccion, 
