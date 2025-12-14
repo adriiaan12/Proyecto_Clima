@@ -1,0 +1,73 @@
+// frontend/src/Nieve.scss
+@use "sass:math";
+.snow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10; /* Por encima del fondo */
+  overflow: hidden;
+}
+
+$snowflakes: 200;
+
+.snowflake {
+  position: absolute;
+  top: -5vmin;
+  color: #fff;
+  
+  // Lógica para asignar caracteres de nieve distintos
+  span {
+    display: block;
+    font-size: 1.5em; // Tamaño base
+    &::before {
+      content: "\2744"; // Copo estándar
+    }
+  }
+
+  // Variaciones de copos (usando nth-child)
+  &:nth-child(4n+2) span::before { content: "\2745"; }
+  &:nth-child(4n+3) span::before { content: "\2747"; }
+  &:nth-child(4n+4) span::before { content: "\274B"; }
+
+  // El bucle mágico de SASS para aleatoriedad
+  @for $i from 1 through $snowflakes {
+    &:nth-child(#{$i}) {
+      opacity: math.random(90) * 0.01;
+      // Aleatoriedad en posición y tamaño
+      left: math.random(100) * 1vw; 
+      transform: scale(math.random(15) * 0.1); // Tamaño variable
+
+      // Animación de caída + retraso aleatorio
+      animation: snow-fall-#{$i} (math.random(10) * 1s + 5s) (math.random(20) * -1s) linear infinite;
+
+      span {
+        // Animación de giro
+        animation: spin (math.random(5) * 1s + 3s) linear infinite;
+        filter: drop-shadow(0 0 (math.random(5) * 1px) #fff);
+      }
+    }
+
+    @keyframes snow-fall-#{$i} {
+      #{math.percentage(math.random(50) / 600)} { 
+        transform: translateY(0) translateX(0); 
+      }
+      25% {
+        transform: translateY(25vh) translateX(math.random(10) * 1px);
+      }
+      50% {
+        transform: translateY(50vh) translateX(math.random(20) * -1px);
+      }
+      to { 
+        transform: translateY(110vh) translateX(math.random(20) * 1px); 
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

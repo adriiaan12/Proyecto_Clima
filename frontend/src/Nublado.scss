@@ -1,0 +1,75 @@
+// frontend/src/Nublado.scss
+@use "sass:math";
+.clouds-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5; /* Detrás del texto pero visible */
+  overflow: hidden;
+}
+
+$cloud-count: 8; // No necesitamos muchas, unas 8 son suficientes
+
+.cloud {
+  position: absolute;
+  width: 200px;
+  height: 60px;
+  background: #fff;
+  border-radius: 200px; // Forma de píldora base
+  opacity: 0.8;
+  
+  // Dibujamos la parte de arriba de la nube
+  &::after, &::before {
+    content: '';
+    position: absolute;
+    background: inherit;
+    border-radius: 50%;
+  }
+
+  &::after {
+    width: 80px;
+    height: 80px;
+    top: -40px;
+    left: 30px;
+  }
+
+  &::before {
+    width: 100px;
+    height: 100px;
+    top: -50px;
+    left: 80px;
+  }
+
+  // Bucle para dar variedad a cada nube
+  @for $i from 1 through $cloud-count {
+    &:nth-child(#{$i}) {
+      // Posición vertical aleatoria (solo en la mitad superior)
+      top: math.random(60) * 1vh; 
+      
+      // Escala aleatoria para efecto de profundidad
+      transform: scale(math.random(10) * 0.1 + 0.5); 
+      
+      // Opacidad variable
+      opacity: math.random(5) * 0.1 + 0.3;
+
+      // Animación de viento horizontal
+      // Las nubes más grandes se moverán más rápido o lento según el gusto
+      animation: floatClouds (math.random(40) + 20s) linear infinite;
+      
+      // Retraso negativo para que ya haya nubes en pantalla al cargar
+      animation-delay: math.random(60) * -1s;
+    }
+  }
+}
+
+@keyframes floatClouds {
+  from {
+    left: -300px; // Empieza fuera a la izquierda
+  }
+  to {
+    left: 110vw; // Termina fuera a la derecha
+  }
+}

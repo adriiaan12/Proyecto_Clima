@@ -1,0 +1,13 @@
+// frontend/src/Tormenta.scss
+
+.storm-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Importante para poder hacer clic en botones debajo */
+  z-index: 5; /* Por encima de la lluvia y nubes */
+  display: block;
+  background: transparent; /* Dejamos que el JS controle los flashes de fondo */
+}

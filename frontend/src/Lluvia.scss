@@ -1,0 +1,46 @@
+@use "sass:math";
+
+.rain {
+  position: fixed; /* Para que cubra toda la pantalla */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Para poder clicar botones a través de la lluvia */
+  z-index: 1; /* Por encima del fondo pero debajo del texto */
+  overflow: hidden;
+}
+
+$drops: 500;
+
+.drop {
+  position: absolute;
+  top: -5vmin;
+  width: 0; 
+  height: 0;
+  border: 0.25vmin solid transparent;
+  border-bottom-color: #abc2e9;
+  --angle: 91deg;
+  
+  // El bucle mágico de SASS
+  @for $i from 1 through $drops {
+    &:nth-child(#{$i}) {
+      opacity: math.random(90) * 0.01;
+      left: math.random(1200) * 0.1vw;
+      // Ajuste para evitar errores de compilación con unidades
+      border-left-width: math.random(80) * 0.1vmin; 
+      
+      // Animación única para cada gota
+      animation: rain-fall-#{$i} (math.random(15) * 0.15s) (math.random(25) * -0.5s) ease-in infinite;
+    }
+
+    @keyframes rain-fall-#{$i} {
+      #{math.percentage(math.random(50) / 500)} { 
+        transform: rotate(var(--angle)) translateX(0); 
+      }
+      to { 
+        transform: rotate(var(--angle)) translateX(calc(100vh + 5vmin)); 
+      }
+    }
+  }
+}

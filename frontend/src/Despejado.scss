@@ -1,0 +1,123 @@
+// frontend/src/Despejado.scss
+@use "sass:math";
+
+.sunny-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1; /* Detrás del contenido principal */
+  overflow: hidden;
+}
+
+// --- EL SOL ---
+.sun {
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, #f9d71c 0%, #f9a825 70%);
+  border-radius: 50%;
+  box-shadow: 0 0 40px #f9d71c, 0 0 80px #ffca28;
+  animation: sunPulse 4s infinite alternate;
+  z-index: 2;
+
+  // Los rayos del sol
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px;
+    height: 280px;
+    border: 2px dashed rgba(255, 215, 0, 0.4);
+    border-radius: 50%;
+    animation: sunSpin 20s linear infinite;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    height: 320px;
+    border: 2px dashed rgba(255, 215, 0, 0.2);
+    border-radius: 50%;
+    animation: sunSpin 30s linear infinite reverse;
+  }
+}
+
+@keyframes sunPulse {
+  0% { transform: scale(1); box-shadow: 0 0 40px #f9d71c; }
+  100% { transform: scale(1.1); box-shadow: 0 0 80px #f9d71c, 0 0 100px #ff9800; }
+}
+
+@keyframes sunSpin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+// --- LOS PÁJAROS ---
+$bird-count: 5;
+
+.bird {
+  position: absolute;
+  opacity: 0; // Empiezan invisibles
+  
+  // Dibujo del pájaro usando bordes (forma de 'V')
+  width: 20px;
+  height: 20px;
+  border-top: 3px solid #fff;
+  border-right: 3px solid #fff;
+  transform: rotate(45deg); // Rotamos para que parezca una gaviota
+
+  @for $i from 1 through $bird-count {
+    &:nth-child(#{$i}) {
+      top: math.random(60) * 1vh; // Altura aleatoria
+      left: -10vw; // Empiezan fuera de la pantalla
+      
+      // Animación de vuelo
+      animation: fly (math.random(10) * 1s + 10s) linear infinite;
+      animation-delay: math.random(20) * 1s; // Salen en momentos distintos
+      
+      // Variación de tamaño
+      transform: scale(math.random(5) * 0.1 + 0.5) rotate(50deg); 
+    }
+  }
+}
+
+// Aleteo simple
+.bird::after {
+    content: '';
+    position: absolute;
+    // ... detalles para animar aleteo si quisieras, 
+    // pero con el movimiento CSS suele bastar para siluetas lejanas
+}
+
+@keyframes fly {
+  0% {
+    left: -10vw;
+    opacity: 0;
+    margin-top: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  50% {
+    margin-top: -50px; // Movimiento ondulante
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    left: 110vw;
+    opacity: 0;
+    margin-top: 0;
+  }
+}

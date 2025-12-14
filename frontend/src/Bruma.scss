@@ -1,0 +1,51 @@
+// frontend/src/Bruma.scss
+@use "sass:math";
+
+.mist-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 6; /* Por encima de casi todo para "lavar" la imagen */
+  overflow: hidden;
+}
+
+$mist-count: 6;
+
+.mist-patch {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.25); // Blanco muy sutil
+  border-radius: 50%; // Forma circular
+  filter: blur(50px); // El secreto: mucho desenfoque para que no parezcan bolas
+  
+  // Bucle para aleatorizar cada parche de bruma
+  @for $i from 1 through $mist-count {
+    &:nth-child(#{$i}) {
+      // Tamaños variados y grandes
+      width: math.random(40) * 1vw + 20vw;
+      height: math.random(40) * 1vh + 20vh;
+      
+      // Posiciones aleatorias por toda la pantalla (no solo abajo)
+      top: math.random(100) * 1vh;
+      left: math.random(100) * 1vw;
+      
+      // Animación de deriva lenta
+      animation: mist-float-#{$i} (math.random(20) + 20s) ease-in-out infinite alternate;
+    }
+
+    // Cada parche se mueve en una dirección distinta
+    @keyframes mist-float-#{$i} {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.3;
+      }
+      100% {
+        // Movimiento suave aleatorio
+        transform: translate(math.random(20) * 1vw - 10vw, math.random(10) * 1vh - 5vh) scale(1.2);
+        opacity: 0.5; // "Respira" haciéndose más visible
+      }
+    }
+  }
+}
