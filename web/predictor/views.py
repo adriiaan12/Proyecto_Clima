@@ -22,7 +22,7 @@ scaler = joblib.load(SCALER_PATH)
 label_classes = np.load(LABEL_ENCODER_PATH, allow_pickle=True)
 
 
-@api_view(['GET', 'POST'])
+@api_view(['POST'])
 def home(request):
     prediccion = "Desconocido"
     datos_aemet = None
@@ -37,7 +37,7 @@ def home(request):
     
     
     # Si es POST, busca en el cuerpo. Si es GET, busca en ?city=Madrid
-    city = request.data.get("city") or request.query_params.get("city")
+    city = request.data.get("city")
 
     # Ciudad por defecto
     if not city:

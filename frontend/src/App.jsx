@@ -16,7 +16,7 @@ function App() {
 
   // Estado para la lista del desplegable
   const [listaCiudades, setListaCiudades] = useState([])
-  
+
   //Controla si el menú está abierto o cerrado
   const [isOpen, setIsOpen] = useState(false);
 
@@ -39,7 +39,7 @@ function App() {
           setListaCiudades(datos.available_cities);
         }
 
-        determinarFondoYClima(datos.clase_clima || datos.prediccion || '');
+        determinarFondoYClima(datos.clase_clima);
       })
       .catch(error => console.error("Error cargando el clima:", error));
   }
@@ -113,46 +113,45 @@ function App() {
           <div className="glass-card">
 
             {/* SELECTOR DE CIUDAD (DESPLEGABLE PERSONALIZADO) */}
-            <div style={{ marginBottom: '10px' }}>
-              <div className="glass-dropdown">
-                
-                {/* BOTÓN PRINCIPAL: Abre/Cierra al hacer clic */}
-                <button 
-                    className="glass-select" 
-                    onClick={() => setIsOpen(!isOpen)}
-                >
-                  {ciudad}
-                  
-                  <span className={`arrow ${isOpen ? 'open' : ''}`}></span>
-                </button>
 
-                {/* LISTA DE OPCIONES: Solo se ve si isOpen es true */}
-                {isOpen && (
-                    <ul className="glass-options">
-                    {listaCiudades.map((c, i) => (
-                        <li key={i} onClick={() => seleccionarCiudad(c)}>
-                        {c}
-                        </li>
-                    ))}
-                    </ul>
-                )}
-              </div>
+            <div className="glass-dropdown">
+
+              {/* BOTÓN PRINCIPAL: Abre/Cierra al hacer clic */}
+              <button
+                className="glass-select"
+                onClick={() => setIsOpen(!isOpen)}
+              >
+                {ciudad}
+
+              </button>
+
+              {/* LISTA DE OPCIONES: Solo se ve si isOpen es true */}
+              {isOpen && (
+                <ul className="glass-options">
+                  {listaCiudades.map((c, i) => (
+                    <li key={i} onClick={() => seleccionarCiudad(c)}>
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
+
 
             {/* DATOS*/}
             <div className="temp-huge">{Math.round(clima.temperatura)}°</div>
-            <h3 style={{ textTransform: 'capitalize', margin: 0 }}>{clima.prediccion}</h3>
+            <h3 style={{ fontSize: '3rem', textTransform: 'capitalize', margin: 0 }}>{clima.prediccion}</h3>
 
             <div className="details-grid">
               <div>
-                <small>Humedad</small>
-                <p style={{ fontSize: '1.5rem', margin: '5px 0' }}>{Math.round(clima.humedad)}%</p>
+                <small style={{ fontSize: '2rem' }}>Humedad</small>
+                <p style={{ fontSize: '2.5rem', margin: '5px 0' }}>{Math.round(clima.humedad)}%</p>
               </div>
               <div>
-                <small>Viento</small>
+                <small style={{ fontSize: '2rem' }}>Viento</small>
                 {/* Redondeamos a 2 decimales*/}
-                <p style={{ fontSize: '1.5rem', margin: '5px 0' }}>
-                    {Number(clima.wind_speed).toFixed(2)} km/h
+                <p style={{ fontSize: '2.5rem', margin: '5px 0' }}>
+                  {Number(clima.wind_speed).toFixed(2)} m/s
                 </p>
               </div>
             </div>
