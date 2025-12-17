@@ -2,7 +2,7 @@ import React from 'react';
 import './Bruma.scss';
 
 const Bruma = () => {
-  // Generamos un array para los parches de bruma
+  
   const parches = Array.from({ length: 6 });
 
   return (

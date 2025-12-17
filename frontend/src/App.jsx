@@ -17,7 +17,7 @@ function App() {
   // Estado para la lista del desplegable
   const [listaCiudades, setListaCiudades] = useState([])
   
-  // 1. NUEVO ESTADO: Controla si el menú está abierto o cerrado
+  //Controla si el menú está abierto o cerrado
   const [isOpen, setIsOpen] = useState(false);
 
   // Estados climáticos
@@ -56,25 +56,25 @@ function App() {
     setEsLluvioso(false); setEsNieve(false); setEsNublado(false);
     setEsDespejado(false); setEsTormenta(false); setEsNiebla(false); setEsBruma(false);
 
-    if (tiempo.includes('clear') || tiempo.includes('sol') || tiempo.includes('despejado')) {
+    if (tiempo.includes('clear')) {
       setEsDespejado(true);
       setFondo('linear-gradient(to bottom, #2980b9, #6dd5fa, #ffffff)');
-    } else if (tiempo.includes('thunderstorm') || tiempo.includes('tormenta')) {
+    } else if (tiempo.includes('thunderstorm')) {
       setEsTormenta(true); setEsLluvioso(true);
       setFondo('linear-gradient(to bottom, #0f2027, #203a43, #2c5364)');
-    } else if (tiempo.includes('rain') || tiempo.includes('lluvi')) {
+    } else if (tiempo.includes('rain')) {
       setEsLluvioso(true);
       setFondo('linear-gradient(to bottom, #203a43, #2c5364)');
-    } else if (tiempo.includes('snow') || tiempo.includes('niev')) {
+    } else if (tiempo.includes('snow')) {
       setEsNieve(true);
       setFondo('linear-gradient(to bottom, #E6DADA, #274046)');
-    } else if (tiempo.includes('mist') || tiempo.includes('bruma')) {
+    } else if (tiempo.includes('mist')) {
       setEsBruma(true);
       setFondo('linear-gradient(to bottom, #cfd9df, #e2ebf0)');
-    } else if (tiempo.includes('fog') || tiempo.includes('niebla')) {
+    } else if (tiempo.includes('fog')) {
       setEsNiebla(true);
       setFondo('linear-gradient(to bottom, #3e5151, #decba4)');
-    } else if (tiempo.includes('clouds') || tiempo.includes('nub')) {
+    } else if (tiempo.includes('clouds')) {
       setEsNublado(true);
       setFondo('linear-gradient(to bottom, #757F9A, #D7DDE8)');
     } else {
@@ -82,13 +82,13 @@ function App() {
     }
   }
 
-  // Manejador básico de cambio (llama a la API)
+  // Manejador básico de cambio
   const handleCiudadChange = (nuevaCiudad) => {
     setCiudad(nuevaCiudad);
     obtenerClima(nuevaCiudad);
   }
 
-  // 2. FUNCIÓN AUXILIAR: Selecciona la ciudad y CIERRA el menú
+  //Selecciona la ciudad y CIERRA el menú
   const seleccionarCiudad = (ciudadElegida) => {
     handleCiudadChange(ciudadElegida);
     setIsOpen(false); // Cerramos el menú
@@ -122,7 +122,7 @@ function App() {
                     onClick={() => setIsOpen(!isOpen)}
                 >
                   {ciudad}
-                  {/* Flecha dinámica que gira si está abierto */}
+                  
                   <span className={`arrow ${isOpen ? 'open' : ''}`}></span>
                 </button>
 
@@ -139,11 +139,10 @@ function App() {
               </div>
             </div>
 
-            {/* DATOS GIGANTES */}
+            {/* DATOS*/}
             <div className="temp-huge">{Math.round(clima.temperatura)}°</div>
             <h3 style={{ textTransform: 'capitalize', margin: 0 }}>{clima.prediccion}</h3>
 
-            {/* DETALLES EN REJILLA */}
             <div className="details-grid">
               <div>
                 <small>Humedad</small>
@@ -151,9 +150,9 @@ function App() {
               </div>
               <div>
                 <small>Viento</small>
-                {/* Redondeamos a 1 decimal para que quede limpio */}
+                {/* Redondeamos a 2 decimales*/}
                 <p style={{ fontSize: '1.5rem', margin: '5px 0' }}>
-                    {Number(clima.wind_speed).toFixed(1)} km/h
+                    {Number(clima.wind_speed).toFixed(2)} km/h
                 </p>
               </div>
             </div>

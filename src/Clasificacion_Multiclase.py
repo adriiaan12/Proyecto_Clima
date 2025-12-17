@@ -6,24 +6,24 @@ import joblib
 import tensorflow as tf
 
 
-# === 1. Cargar datos ===
+#Cargar datos
 data = pd.read_csv("../data/dataset2/all_weather_data.csv")
 print("Columnas:", data.columns)
 print("Filas:", len(data))
 
-# === 2. Extraer información temporal ===
+#Extraer información temporal
 data['Timestamp'] = pd.to_datetime(data['Timestamp'])
 data['Hour'] = data['Timestamp'].dt.hour
 data['Month'] = data['Timestamp'].dt.month
 data['Weekday'] = data['Timestamp'].dt.weekday
 
-# === 3. Codificar la ciudad (One-Hot) ===
+#Codificar la ciudad
 encoder = OneHotEncoder(sparse_output=False) 
 city_encoded = encoder.fit_transform(data[['City']])
 city_df = pd.DataFrame(city_encoded, columns=encoder.get_feature_names_out(['City']))
 data = pd.concat([data, city_df], axis=1)
 
-# === 4. Seleccionar features y target ===
+#Seleccionar features y target
 features = ["Temperature (ºC)", "Wind Speed (m/s)", "Wind Direction (degrees)",
             "Pressure (hPa)", "Humidity (%)", "Hour", "Month", "Weekday"] + list(city_df.columns)
 target = "Weather"
@@ -31,26 +31,26 @@ target = "Weather"
 X = data[features]
 y = data[target]
 
-# === 5. Escalar las features numéricas ===
+#Escalar las features numéricas
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-# Guardar el scaler para usar en predicciones
+#Guardar el scaler para usar en predicciones
 joblib.dump(scaler, "../models/scaler.save")
 joblib.dump(encoder, "../models/city_encoder.save")
 
 
-# === 6. Codificar el target ===
+# Codificar el target
 label_encoder = LabelEncoder()
 y_encoded = label_encoder.fit_transform(y)
 
 # Guardar el label encoder
 np.save("../models/label_encoder_classes.npy", label_encoder.classes_)
 
-# === 7. Dividir en entrenamiento y test ===
+#Dividir en entrenamiento y test
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_encoded, test_size=0.2, random_state=42)
 
-# === 8. Crear modelo de red neuronal ===
+#Crear modelo de red neuronal
 model = tf.keras.models.Sequential([
     tf.keras.layers.Dense(128, activation='relu', input_shape=(X_train.shape[1],)),
     tf.keras.layers.Dense(64, activation='relu'),
@@ -62,11 +62,11 @@ model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
 
-# === 9. Entrenar modelo ===
+#Entrenar modelo
 history = model.fit(X_train, y_train,
                     epochs=50,
                     validation_data=(X_test, y_test))
 
-# === 10. Guardar modelo ===
+#Guardar modelo
 model.save("../models/modelo_clima.h5")
 print("✅ Modelo guardado en /models/modelo_clima.h5")

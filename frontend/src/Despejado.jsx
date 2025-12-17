@@ -2,7 +2,7 @@ import React from 'react';
 import './Despejado.scss';
 
 const Despejado = () => {
-  // Generamos un array para los pájaros
+  
   const pajaros = Array.from({ length: 5 });
 
   return (

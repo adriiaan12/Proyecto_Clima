@@ -52,7 +52,7 @@ def obtener_periodo_segun_hora(hora_actual: int) -> str:
         return "06-12"
     elif 12 <= hora_actual < 18:
         return "12-18"
-    else: # 18 <= hora_actual < 24
+    else:
         return "18-24"
 
 
@@ -67,10 +67,10 @@ def obtener_prediccion_adaptada_aemet(nombre_municipio: str) -> Dict[str, Any] |
     
     # Parámetros de reintento
     MAX_REINTENTOS = 3
-    TIEMPO_ESPERA = 2 # Espera de 2 segundos entre intentos
+    TIEMPO_ESPERA = 2
     
     try:
-        # 1. Obtener la URL de los datos
+        #Endpoint
         url_prediccion = f"{BASE_URL}/prediccion/especifica/municipio/diaria/{cod_municipio}?api_key={API_KEY}"
         
         response_inicial = requests.get(url_prediccion) 
@@ -84,7 +84,7 @@ def obtener_prediccion_adaptada_aemet(nombre_municipio: str) -> Dict[str, Any] |
         url_datos = data_inicial['datos']
         data_prediccion = None
 
-        # 2. Obtener los datos reales con REINTENTO SÍNCRONO
+        #Obtener los datos reales
         for intento in range(MAX_REINTENTOS):
             try:
                 print(f"Intento {intento + 1}/{MAX_REINTENTOS}: Accediendo a la URL de datos...")
@@ -132,7 +132,7 @@ def obtener_prediccion_adaptada_aemet(nombre_municipio: str) -> Dict[str, Any] |
 
         
         
-        # Guardar el JSON crudo (opción para activar si se necesita)
+        # Guardar el JSON crudo (opcional)
         # nombre_archivo_salida = f"prediccion_cruda_{nombre_municipio}_{cod_municipio}.json"
         # guardar_como_json(data_prediccion, nombre_archivo_salida) 
         
