@@ -87,58 +87,35 @@ def obtener_prediccion_adaptada_aemet(nombre_municipio: str) -> Dict[str, Any] |
         #Obtener los datos reales
         for intento in range(MAX_REINTENTOS):
             try:
-                print(f"Intento {intento + 1}/{MAX_REINTENTOS}: Accediendo a la URL de datos...")
-                
+                print(f"Intento {intento + 1}/{MAX_REINTENTOS}...")
                 response_datos = requests.get(url_datos) 
                 response_datos.raise_for_status() 
                 
-                # 🛑 Manejo de Decodificación/JSON
+                # Intentamos convertir a JSON
                 data_prediccion = response_datos.json()
+                print("✅ Datos obtenidos.")
+                break
                 
-                print("Datos obtenidos con éxito.")
-                break # Éxito: salimos del bucle
-                
-            except json.JSONDecodeError as e:
-                # Si falla la decodificación (codificación incorrecta o no es JSON)
-                try:
-                    # Forzamos la decodificación a Latin-1 para ver el mensaje de error en español
-                    error_content = response_datos.content.decode('latin-1', errors='replace')
-                except:
-                    error_content = "[Contenido binario o ilegible]"
-                
-                print("-" * 50)
-                print(f"3. FALLO: Respuesta NO es JSON. Error: {e}. Contenido:")
-                print(error_content) 
-                print("-" * 50)
+            except (json.JSONDecodeError, requests.exceptions.RequestException) as e:
                 
                 if intento < MAX_REINTENTOS - 1:
-                    print(f"Esperando {TIEMPO_ESPERA}s y reintentando...")
-                    time.sleep(TIEMPO_ESPERA) # Pausa SÍNCRONA
+                    print(f"⚠️ Error ({e}). Reintentando en {TIEMPO_ESPERA}s...")
+                    time.sleep(TIEMPO_ESPERA)
                 else:
-                    print("Fallo fatal: La respuesta sigue sin ser un JSON válido.")
+                    print(f"❌ Fallo fatal tras {MAX_REINTENTOS} intentos.")
                     return None
-                    
-            except requests.exceptions.HTTPError as e:
-                # Capturamos errores HTTP (404, 429, 500)
-                if intento < MAX_REINTENTOS - 1:
-                    print(f"Advertencia: HTTP Error ({e}). Esperando {TIEMPO_ESPERA}s...")
-                    time.sleep(TIEMPO_ESPERA) # Pausa SÍNCRONA
-                else:
-                    print(f"Error fatal: Falló después de {MAX_REINTENTOS} intentos: {e}")
-                    return None
-        
+
         if data_prediccion is None:
             return None
 
         
-        
         # Guardar el JSON crudo (opcional)
-        # nombre_archivo_salida = f"prediccion_cruda_{nombre_municipio}_{cod_municipio}.json"
+        #nombre_archivo_salida = f"prediccion_cruda_{nombre_municipio}_{cod_municipio}.json"
         # guardar_como_json(data_prediccion, nombre_archivo_salida) 
         
         if not data_prediccion or 'prediccion' not in data_prediccion[0] or not data_prediccion[0]['prediccion']['dia']:
-             print("No se encontraron datos de predicción diaria en el JSON.")
-             return None
+            print("No se encontraron datos de predicción diaria en el JSON.")
+            return None
 
         primer_dia = data_prediccion[0]['prediccion']['dia'][0]
         
